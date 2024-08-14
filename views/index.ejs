@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blogger to SQL Dump</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="header p-2 d-flex justify-content-between align-items-center">
+    <div class="d-flex align-items-center">
+        <div class="burger-icon" onclick="toggleSidebar()">
+            <i class="fas fa-bars"></i>
+        </div>
+        <h1 class="h5 mb-0">Blogger to SQL Dump</h1>
+    </div>
+    <% if (!user) { %>
+        <a href="/login" class="btn btn-primary">
+            <i class="fab fa-google"></i> Sign in with Google
+        </a>
+    <% } else { %>
+        <div class="d-flex align-items-center">
+            <span class="mr-2">Hello, <%= user.name %></span>
+            <button id="logout-button" class="btn btn-light" onclick="handleSignoutClick()">Logout</button>
+        </div>
+    <% } %>
+</header>
+
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<div class="sidebar" id="sidebar">
+    <div class="close-btn" onclick="toggleSidebar()">
+        <i class="fas fa-times"></i>
+    </div>
+</div>
+
+<div class="main-content p-2">
+    <div class="left-section p-2">
+        <h2 class="h6 font-weight-bold mb-3">Choose your blog</h2>
+        <ul id="blog-list" class="list-group"></ul>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script>
+    function toggleSidebar() {
+        $('#sidebar').toggleClass('active');
+        $('#overlay').toggleClass('active');
+    }
+
+    async function handleSignoutClick() {
+        await fetch('/logout', { method: 'POST' });
+        location.reload();
+    }
+
+    async function fetchBlogs() {
+        try {
+            const response = await fetch('/blogs');
+            if (response.status === 401) {
+                window.location.href = '/login';
+                return;
+            }
+
+            const blogs = await response.json();
+            const blogList = $('#blog-list');
+            blogList.empty();
+
+            if (blogs.length === 0) {
+                blogList.append('<li class="list-group-item">No blogs found.</li>');
+                return;
+            }
+
+            blogs.forEach(blog => {
+                blogList.append(`
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        ${blog.name}
+                        <button class="btn btn-primary btn-sm" onclick="exportBlog('${blog.id}', '${blog.name}')">Download SQL</button>
+                    </li>
+                `);
+            });
+        } catch (error) {
+            console.error('Error fetching blogs:', error);
+            alert('An error occurred while fetching your blogs.');
+        }
+    }
+
+    async function exportBlog(blogId, blogName) {
+        try {
+            const button = $(`[onclick="exportBlog('${blogId}', '${blogName}')"]`);
+            button.prop('disabled', true).text('Exporting...');
+
+            const response = await fetch(`/export/${blogId}`);
+            if (response.status === 401) {
+                window.location.href = '/login';
+                return;
+            }
+
+            const data = await response.json();
+            downloadFile(data.sql, `${blogName}-posts.sql`);
+
+            button.prop('disabled', false).text('Download SQL');
+        } catch (error) {
+            console.error('Error exporting blog:', error);
+            alert('An error occurred while exporting the blog.');
+        }
+    }
+
+    function downloadFile(content, fileName) {
+        const a = document.createElement('a');
+        const blob = new Blob([content], { type: 'text/sql' });
+        const url = URL.createObjectURL(blob);
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }, 0);
+    }
+
+    $(document).ready(() => {
+        fetchBlogs();
+    });
+</script>
+</body>
+</html>

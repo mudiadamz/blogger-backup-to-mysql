@@ -1,0 +1,25 @@
+{
+  "name": "blogger-backup-to-mysql",
+  "version": "1.0.0",
+  "description": "Convert your blogger data, and export to an SQL dump",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "production": "pm2 start index.js --name \"localhost 3000\""
+  },
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.7.3",
+    "body-parser": "^1.20.2",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "google-auth-library": "^9.13.0",
+    "kafka-node": "^5.0.0",
+    "node-fetch": "^3.3.2",
+    "pm2": "^5.4.2",
+    "socket.io": "^4.7.5",
+    "sqlite3": "^5.1.7"
+  }
+}

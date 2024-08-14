@@ -1,0 +1,83 @@
+
+:root {
+    --main-color: #4A90E2;
+    --primary-color: #50E3C2;
+    --secondary-color: #F5A623;
+}
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f0f0f0;
+    color: #333;
+}
+.header, .footer {
+    background-color: var(--main-color);
+    color: white;
+}
+.header a, .footer a {
+    color: white;
+    text-decoration: none;
+}
+.sidebar {
+    background-color: var(--primary-color);
+    color: white;
+    display: none;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 200px;
+    z-index: 1040;
+    flex-direction: column;
+    transition: transform 0.3s ease;
+}
+.sidebar.active {
+    display: flex;
+    transform: translateX(0);
+}
+.sidebar .close-btn {
+    cursor: pointer;
+    align-self: flex-end;
+    margin: 10px;
+}
+.sidebar nav a {
+    padding: 10px 15px;
+}
+.burger-icon {
+    cursor: pointer;
+    margin-right: 10px;
+}
+.main-content {
+    display: flex;
+    flex: 1;
+    transition: margin-left 0.3s ease;
+}
+.left-section, .right-section {
+    overflow: auto;
+    height: calc(100vh - 56px);
+    width: 50%;
+}
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1030;
+}
+.overlay.active {
+    display: block;
+}
+#progressBar {
+    display: none;
+    height: 20px;
+    background: var(--main-color);
+}
+.json-view {
+    background-color: white;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    white-space: pre-wrap;
+}
