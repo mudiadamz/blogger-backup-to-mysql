@@ -32,7 +32,7 @@ Before you begin, ensure you have the following installed:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/blogger-to-sql-dump.git
+git clone [https://github.com/mudiadamz/blogger-backup-to-mysql.git](https://github.com/mudiadamz/blogger-backup-to-mysql.git)
 cd blogger-to-sql-dump
 ```
 
